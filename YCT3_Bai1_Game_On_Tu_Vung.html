@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YCT 3 Bài 1 ⚽ Football Vocabulary Game</title>
+<style>
+:root{--green:#087443;--green2:#10a36a;--gold:#ffd447;--dark:#09251a;--white:#fff;--bg:#eef8f2}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:var(--bg);color:#173326}
+header{background:linear-gradient(135deg,#063b26,#0a8b55);color:white;text-align:center;padding:28px 16px;position:relative;overflow:hidden}
+header:before{content:"⚽";position:absolute;font-size:110px;right:4%;top:-25px;opacity:.12}
+h1{margin:0;font-size:clamp(28px,5vw,48px)}header p{margin:8px 0 0;font-size:17px}
+.wrap{max-width:1100px;margin:auto;padding:20px}
+.tabs{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:18px}
+button{border:0;border-radius:14px;padding:12px 17px;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 4px 12px #0002;background:#fff;color:#173326}
+button:hover{transform:translateY(-2px)}button.active{background:var(--gold);color:#4b3a00}
+.panel{background:#fffffff2;border-radius:24px;padding:22px;box-shadow:0 8px 28px #0001}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.card{min-height:195px;border:2px solid #d8eadf;border-radius:20px;padding:16px;text-align:center;background:linear-gradient(145deg,#fff,#f2faf5);display:flex;flex-direction:column;justify-content:center}
+.ball{font-size:35px}.zh{font-size:42px;font-weight:900;color:#075c38}.py{font-size:19px;color:#0a8b55;font-weight:800;margin:5px}.vi{font-size:17px}.en{font-size:14px;color:#66756d;margin-top:5px}
+.quiz{text-align:center}.question{font-size:26px;font-weight:900;margin:20px 0}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:760px;margin:auto}.answers button{min-height:60px;border:2px solid #d8eadf}.correct{background:#d8f8e6!important;border-color:#18a15e!important}.wrong{background:#ffe1e1!important;border-color:#e33b3b!important}
+.score{font-size:18px;font-weight:800;margin:10px}.listen{background:#e8fff1;border:2px solid #a9e5c2;padding:18px;border-radius:18px;max-width:760px;margin:15px auto}.listen button{background:#087443;color:white}.small{font-size:14px;color:#68776f}.matchgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:850px;margin:auto}.matchgrid button{min-height:58px}.selected{outline:4px solid #ffd447}
+.namebox{text-align:center;margin-top:18px;padding:14px;background:#fff;border-radius:18px;border:2px dashed #a8cdb8}.namebox input{padding:11px;border:1px solid #b7cfc2;border-radius:10px;margin:5px;width:min(320px,80%)}.footer{text-align:center;color:#62736a;padding:20px}
+@media(max-width:650px){.answers,.matchgrid{grid-template-columns:1fr}.wrap{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+<h1>⚽ YCT 3 · BÀI 1</h1>
+<p>Football Vocabulary Challenge · Bài khóa 1 / Từ vựng</p>
+</header>
+<div class="wrap">
+<div class="tabs">
+<button id="tCards" class="active" onclick="show('cards')">🗂️ Flash Cards</button>
+<button id="tQuiz" onclick="show('quiz')">🎯 Trắc nghiệm</button>
+<button id="tListen" onclick="show('listen')">🎧 Luyện nghe</button>
+<button id="tMatch" onclick="show('match')">🧩 Ghép từ</button>
+</div>
+
+<section id="cards" class="panel">
+<h2>🟢 Đội hình 12 từ vựng</h2>
+<div class="cards" id="cardList"></div>
+</section>
+
+<section id="quiz" class="panel" style="display:none">
+<div class="quiz"><div class="score" id="score">Điểm: 0 / 0</div><div class="question" id="question"></div><div class="answers" id="answers"></div><button onclick="newQuiz()" style="margin-top:18px">🔄 Câu mới</button></div>
+</section>
+
+<section id="listen" class="panel" style="display:none">
+<div class="quiz">
+<h2>🎧 Luyện nghe tiếng Trung</h2>
+<p>Nhấn <b>🔊 Nghe</b> để nghe từ, sau đó chọn Pinyin đúng.</p>
+<div class="listen"><div id="listenWord" class="zh">年级</div><button onclick="speakCurrent()">🔊 Nghe từ</button></div>
+<div class="answers" id="listenAnswers"></div>
+<div class="score" id="listenScore">Điểm nghe: 0 / 0</div>
+<button onclick="newListen()">🔄 Từ khác</button>
+</div>
+</section>
+
+<section id="match" class="panel" style="display:none">
+<div class="quiz"><h2>🧩 Ghép chữ Hán với nghĩa</h2><p class="small">Chọn một chữ Hán rồi chọn nghĩa tương ứng.</p><div class="matchgrid" id="matchGrid"></div><div id="matchMsg" class="score"></div><button onclick="newMatch()">🔄 Chơi lại</button></div>
+</section>
+
+<div class="namebox">
+<b>🏆 Cầu thủ:</b><br>
+<input id="student" placeholder="Tên HS / Tên nhóm">
+<input id="className" placeholder="Lớp">
+<br><button onclick="saveName()">💾 Lưu tên</button>
+<span id="saved"></span>
+</div>
+<div class="footer">⚽ YCT 3 Vocabulary Game · Học từ vựng như một trận bóng!</div>
+</div>
+
+<script>
+const words=[
+["年级","niánjí","khối/lớp","grade","🏫"],["课","kè","bài học / tiết học","lesson/class","📖"],
+["几","jǐ","mấy, bao nhiêu","how many","❓"],["班","bān","lớp","class","🏫"],
+["两","liǎng","hai","two","2️⃣"],["张","Zhāng","Trương (họ người Trung Quốc)","a Chinese surname","👤"],
+["老师","lǎoshī","giáo viên","teacher","👨‍🏫"],["新","xīn","mới","new","✨"],
+["男","nán","nam","male","👦"],["女","nǚ","nữ","female","👧"],
+["还","hái","vẫn, còn","still / also","🔄"],["有","yǒu","có","have / there is","📦"]
+];
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+document.getElementById("cardList").innerHTML=words.map(w=>`<div class="card"><div class="ball">${w[4]}</div><div class="zh">${w[0]}</div><div class="py">${w[1]}</div><div class="vi">${w[2]}</div><div class="en">${w[3]}</div></div>`).join("");
+
+function show(id){
+["cards","quiz","listen","match"].forEach(x=>document.getElementById(x).style.display=x===id?"block":"none");
+["tCards","tQuiz","tListen","tMatch"].forEach(x=>document.getElementById(x).classList.remove("active"));
+document.getElementById(id==="cards"?"tCards":id==="quiz"?"tQuiz":id==="listen"?"tListen":"tMatch").classList.add("active");
+if(id==="quiz")newQuiz(); if(id==="listen")newListen(); if(id==="match")newMatch();
+}
+let score=0,total=0;
+function newQuiz(){
+const cur=words[Math.floor(Math.random()*words.length)], byPinyin=Math.random()>.5;
+document.getElementById("question").textContent=byPinyin?`Pinyin của “${cur[0]}” là gì?`:`“${cur[0]}” có nghĩa là gì?`;
+const correct=byPinyin?cur[1]:cur[2], opts=shuffle([correct,...shuffle(words.filter(w=>w!==cur)).slice(0,3).map(w=>byPinyin?w[1]:w[2])]);
+const box=document.getElementById("answers");box.innerHTML="";
+opts.forEach(o=>{let b=document.createElement("button");b.textContent=o;b.onclick=()=>{if(b.disabled)return;b.disabled=true;total++;if(o===correct){score++;b.classList.add("correct")}else{b.classList.add("wrong");[...box.children].find(x=>x.textContent===correct)?.classList.add("correct")}document.getElementById("score").textContent=`Điểm: ${score} / ${total}`};box.appendChild(b)});
+}
+let listenCur,ls=0,lt=0;
+function newListen(){
+listenCur=words[Math.floor(Math.random()*words.length)];
+document.getElementById("listenWord").textContent="???";
+const opts=shuffle([listenCur[1],...shuffle(words.filter(w=>w!==listenCur)).slice(0,3).map(w=>w[1])]);
+const box=document.getElementById("listenAnswers");box.innerHTML="";
+opts.forEach(o=>{let b=document.createElement("button");b.textContent=o;b.onclick=()=>{if(b.disabled)return;b.disabled=true;lt++;if(o===listenCur[1]){ls++;b.classList.add("correct")}else{b.classList.add("wrong");[...box.children].find(x=>x.textContent===listenCur[1])?.classList.add("correct")}document.getElementById("listenScore").textContent=`Điểm nghe: ${ls} / ${lt}`};box.appendChild(b)});
+}
+function speakCurrent(){
+if(!listenCur)return;
+const u=new SpeechSynthesisUtterance(listenCur[0]);u.lang="zh-CN";u.rate=.72;u.pitch=1;speechSynthesis.cancel();speechSynthesis.speak(u);
+}
+let first=null,matched=0;
+function newMatch(){
+first=null;matched=0;document.getElementById("matchMsg").textContent="";
+const chosen=shuffle(words).slice(0,6),grid=document.getElementById("matchGrid");grid.innerHTML="";
+shuffle(chosen).forEach(w=>add(w[0],"zh",w[0]));shuffle(chosen).forEach(w=>add(w[2],"vi",w[0]));
+function add(text,type,key){let b=document.createElement("button");b.textContent=text;b.dataset.key=key;b.dataset.type=type;b.onclick=()=>{if(b.disabled)return;if(!first){first=b;b.classList.add("selected");return}if(first.dataset.key===b.dataset.key&&first.dataset.type!==b.dataset.type){first.disabled=b.disabled=true;first.classList.remove("selected");matched++;document.getElementById("matchMsg").textContent=`Đúng ${matched}/6`;if(matched===6)document.getElementById("matchMsg").textContent="🎉 GOAL! Hoàn thành 6/6!";first=null}else{first.classList.remove("selected");b.classList.add("wrong");setTimeout(()=>b.classList.remove("wrong"),450);first=null}};grid.appendChild(b)}
+}
+function saveName(){localStorage.yctName=document.getElementById("student").value;localStorage.yctClass=document.getElementById("className").value;document.getElementById("saved").textContent=" ✅ Đã lưu!";setTimeout(()=>document.getElementById("saved").textContent="",1200)}
+if(localStorage.yctName){document.getElementById("student").value=localStorage.yctName;document.getElementById("className").value=localStorage.yctClass||""}
+</script>
+</body></html>
